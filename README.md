@@ -1,6 +1,6 @@
 # GraphLibrary
 
-All common graph algorithms implemented in C++ 11. All popular graph algorithms implemented in C++ 11. Graphs are represented as adjacency lists with an additional set for edges to ensure constant runtimes for the existence query of an edge.
+All popular graph algorithms implemented in C++ 11. Graphs are represented as adjacency lists with an additional set for edges to ensure constant runtimes for the existence query of an edge.
 
 The implemented algorithms are:
 * Breadth-first search
