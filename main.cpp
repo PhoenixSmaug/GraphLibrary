@@ -18,8 +18,8 @@ int main() {
     }
     std::cout << std::endl;
 
-    weightedGraph = WeightedGraph({{0, 1, 1}, {1, 2, 1}, {2, 3, 2}, {2, 4, 1}, {0, 5, 2}, {5, 6, 3}, {5, 7, 4}});
-    std::vector<int> distances = weightedGraph.BellmanFord(0);
+    weightedGraph = WeightedGraph({{0, 1, 0.5}, {1, 2, 1.3}, {2, 3, 2.5}, {2, 4, 1.9}, {0, 5, 0.7}, {5, 6, 3.2}, {5, 7, 4.01}});
+    std::vector<float> distances = weightedGraph.BellmanFord(0);
     std::cout << "[Bellman-Ford] Distances to other vertices: ";
     for (int i = 0; i < distances.size(); ++i) {
         std::cout << distances[i] << " ";
@@ -33,8 +33,8 @@ int main() {
     }
     std::cout << std::endl;
 
-    weightedGraph = WeightedGraph({{0, 2, -2}, {1, 0, 4}, {1, 2, 3}, {2, 3, 2}, {3, 1, -1}});
-    std::vector<std::vector<int>> distanceMatrix = weightedGraph.Johnson();
+    weightedGraph = WeightedGraph({{0, 2, 2}, {1, 0, 4}, {1, 2, 3}, {2, 3, 2}, {3, 1, 1}});
+    std::vector<std::vector<float>> distanceMatrix = weightedGraph.Johnson();
     std::cout << "[Johnson] Distances from each vertex to each other: " << std::endl;
     for (int i = 0; i < distanceMatrix.size(); ++i) {
         for (int j = 0; j < distanceMatrix.size(); ++j) {
@@ -43,7 +43,7 @@ int main() {
         std::cout << std::endl;
     }
 
-    weightedGraph = WeightedGraph({{0, 1, 16}, {0, 2, 13}, {1, 2, 10}, {2, 1, 4}, {1, 3, 12}, {2, 4, 14}, {3, 2, 9}, {4, 3, 7}, {3, 5, 20}, {4, 5, 4}});
+    weightedGraph = WeightedGraph({{0, 1, 8.3}, {0, 2, 13}, {1, 2, 10}, {2, 1, 4}, {1, 3, 12}, {2, 4, 14}, {3, 2, 9}, {4, 3, 7}, {3, 5, 20}, {4, 5, 4}});
     std::cout << "[Ford-Fulkerson] Maximal Flow of Graph: " << weightedGraph.FordFulkerson(0, 5) << std::endl;
     return 0;
 }

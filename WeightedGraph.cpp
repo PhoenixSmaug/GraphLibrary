@@ -27,7 +27,7 @@ WeightedGraph::WeightedGraph(std::vector<std::pair<int, int>> edges) {
     }
 }
 
-WeightedGraph::WeightedGraph(std::vector<std::tuple<int, int, int>> edges) {
+WeightedGraph::WeightedGraph(std::vector<std::tuple<int, int, float>> edges) {
     int max = 0;
     for (int i = 0; i < edges.size(); ++i) {
         if (std::get<0>(edges[i]) < 0 || std::get<1>(edges[i]) < 0) { throw std::invalid_argument("negative value for vertex"); }
@@ -51,7 +51,7 @@ void WeightedGraph::addEdge(const std::pair<int, int> edge) {
     weights.insert({edge, 1});
 }
 
-void WeightedGraph::addEdge(const int b, const int e, const int value) {
+void WeightedGraph::addEdge(const int b, const int e, const float value) {
     Graph::addEdge(b, e);
     weights.insert({{b, e}, value});
 }
@@ -113,7 +113,7 @@ std::vector<int> WeightedGraph::JarnikPrim() {
      */
 
     std::priority_queue<std::pair<int, int>, std::vector<std::pair<int, int>>, std::greater<std::pair<int, int>>> priorityQueue;
-    std::vector<int> keys(this->adjList.size(), std::numeric_limits<int>::max());
+    std::vector<float> keys(this->adjList.size(), std::numeric_limits<float>::max());
     std::vector<int> parents(this->adjList.size(), -1);
     std::vector<int> inMST(this->adjList.size(), false);
 
@@ -127,7 +127,7 @@ std::vector<int> WeightedGraph::JarnikPrim() {
         inMST[min] = true;
 
         for (auto const& i : this->adjList[min]) {
-            int weight = this->weights.at({min, i});
+            float weight = this->weights.at({min, i});
             if (!inMST[i] && keys[i] > weight) {
                 keys[i] = weight;
                 priorityQueue.push({keys[i], i});
@@ -149,7 +149,7 @@ std::vector<std::pair<int, int>> WeightedGraph::Kruskal() {
      */
 
     std::vector<std::pair<int, int>> collector;
-    std::vector<std::pair<int, std::pair<int, int>>> edges;  // {value, {v, w}} with v < w
+    std::vector<std::pair<float, std::pair<int, int>>> edges;  // {value, {v, w}} with v < w
     for (int i = 0; i < this->adjList.size(); ++i) {
         for (auto const& j : this->adjList[i]) {
             if (i < j) { edges.push_back({this->weights.at({i, j}), {i, j}}); }
@@ -173,22 +173,22 @@ std::vector<std::pair<int, int>> WeightedGraph::Kruskal() {
     return collector;
 }
 
-std::vector<int> WeightedGraph::BellmanFord(const int source) {
+std::vector<float> WeightedGraph::BellmanFord(const int source) {
     /*
      * Bellman-Ford Algorithm
      * - Find distance to each vertex in graph
      * - Returns empty vector if graph is not conservative (contains cycles with negative length)
-     * - Not reachable vertices are returned as MAX_INT
+     * - Not reachable vertices are returned as MAX_FLOAT
      */
 
     if (source >= this->adjList.size()) { throw std::invalid_argument("node not in graph"); }
-    std::vector<int> distances(this->adjList.size(), std::numeric_limits<int>::max());
+    std::vector<float> distances(this->adjList.size(), std::numeric_limits<float>::max());
     distances[source] = 0;
 
     for (int i = 0; i < this->adjList.size() - 1; ++i) {
         for (int j = 0; j < this->adjList.size(); ++j) {
             for (auto const& k : this->adjList[j]) {
-                if (distances[j] != std::numeric_limits<int>::max() && distances[j] + this->weights.at({j, k}) < distances[k]) {
+                if (distances[j] != std::numeric_limits<float>::max() && distances[j] + this->weights.at({j, k}) < distances[k]) {
                     distances[k] = distances[j] + this->weights.at({j, k});
                 }
             }
@@ -197,8 +197,8 @@ std::vector<int> WeightedGraph::BellmanFord(const int source) {
 
     for (int i = 0; i < this->adjList.size(); ++i) {  // graph is not conservative
         for (auto const& j : this->adjList[i]) {
-            if (distances[i] != std::numeric_limits<int>::max() && distances[i] + this->weights.at({i, j}) < distances[j]) {
-                return std::vector<int>();
+            if (distances[i] != std::numeric_limits<float>::max() && distances[i] + this->weights.at({i, j}) < distances[j]) {
+                return std::vector<float>();
             }
         }
     }
@@ -206,17 +206,17 @@ std::vector<int> WeightedGraph::BellmanFord(const int source) {
     return distances;
 }
 
-std::vector<int> WeightedGraph::Dijkstra(const int source) {
+std::vector<float> WeightedGraph::Dijkstra(const int source) {
     /*
      * Dijkstra Algorithm
      * - Find distance to each vertex in graph
      * - Only positive weights allowed, no input validation
-     * - Not reachable vertices are returned as MAX_INT
+     * - Not reachable vertices are returned as FLOAT_INT
      * - inspired by https://www.geeksforgeeks.org/dijkstras-shortest-path-algorithm-using-priority_queue-stl/
      */
 
-    std::priority_queue<std::pair<int, int>, std::vector<std::pair<int, int>>, std::greater<std::pair<int, int>>> priorityQueue;
-    std::vector<int> distances(this->adjList.size(), std::numeric_limits<int>::max());
+    std::priority_queue<std::pair<float, int>, std::vector<std::pair<float, int>>, std::greater<std::pair<float, int>>> priorityQueue;
+    std::vector<float> distances(this->adjList.size(), std::numeric_limits<float>::max());
     priorityQueue.push({0, source});
     distances[source] = 0;
 
@@ -225,7 +225,7 @@ std::vector<int> WeightedGraph::Dijkstra(const int source) {
         priorityQueue.pop();
 
         for (auto const& i : this->adjList[min]) {
-            int weight = this->weights.at({min, i});
+            float weight = this->weights.at({min, i});
             if (distances[i] > distances[min] + weight) {
                 distances[i] = distances[min] + weight;
                 priorityQueue.push({distances[i], i});
@@ -244,8 +244,8 @@ std::vector<int> WeightedGraph::Dijkstra(const int source, const int goal) {
      * - Returns empty vector if goal is not reachable
      */
 
-    std::priority_queue<std::pair<int, int>, std::vector<std::pair<int, int>>, std::greater<std::pair<int, int>>> priorityQueue;
-    std::vector<int> distances(this->adjList.size(), std::numeric_limits<int>::max());
+    std::priority_queue<std::pair<float, int>, std::vector<std::pair<float, int>>, std::greater<std::pair<float, int>>> priorityQueue;
+    std::vector<float> distances(this->adjList.size(), std::numeric_limits<float>::max());
     std::vector<int> predecessors(this->adjList.size(), -1);
     priorityQueue.push({0, source});
     distances[source] = 0;
@@ -265,7 +265,7 @@ std::vector<int> WeightedGraph::Dijkstra(const int source, const int goal) {
         }
 
         for (auto const &i: this->adjList[min]) {
-            int weight = this->weights.at({min, i});
+            float weight = this->weights.at({min, i});
             if (distances[i] > distances[min] + weight) {
                 distances[i] = distances[min] + weight;
                 priorityQueue.push({distances[i], i});
@@ -277,16 +277,16 @@ std::vector<int> WeightedGraph::Dijkstra(const int source, const int goal) {
     return std::vector<int>();
 }
 
-int WeightedGraph::DijkstraLength(const int source, const int goal) {
+float WeightedGraph::DijkstraLength(const int source, const int goal) {
     /*
      * Dijkstra Algorithm
      * - Find the shortest distance from source to goal
      * - Only positive weights allowed, no input validation
-     * - Returns 0 if goal is not reachable
+     * - Returns FLOAT_MAX if goal is not reachable
      */
 
-    std::priority_queue<std::pair<int, int>, std::vector<std::pair<int, int>>, std::greater<std::pair<int, int>>> priorityQueue;
-    std::vector<int> distances(this->adjList.size(), std::numeric_limits<int>::max());
+    std::priority_queue<std::pair<float, int>, std::vector<std::pair<float, int>>, std::greater<std::pair<float, int>>> priorityQueue;
+    std::vector<float> distances(this->adjList.size(), std::numeric_limits<float>::max());
     std::vector<int> predecessors(this->adjList.size(), -1);
     priorityQueue.push({0, source});
     distances[source] = 0;
@@ -296,7 +296,7 @@ int WeightedGraph::DijkstraLength(const int source, const int goal) {
         priorityQueue.pop();
 
         if (min == goal) {
-            int path = 0;
+            float path = 0;
             if (predecessors[min] == -1 || min == source) { return 0; }
             while (predecessors[min] != -1) {
                 path += this->weights.at({predecessors[min], min});
@@ -306,7 +306,7 @@ int WeightedGraph::DijkstraLength(const int source, const int goal) {
         }
 
         for (auto const &i: this->adjList[min]) {
-            int weight = this->weights.at({min, i});
+            float weight = this->weights.at({min, i});
             if (distances[i] > distances[min] + weight) {
                 distances[i] = distances[min] + weight;
                 priorityQueue.push({distances[i], i});
@@ -315,16 +315,17 @@ int WeightedGraph::DijkstraLength(const int source, const int goal) {
         }
     }
 
-    return 0;
+    return std::numeric_limits<float>::max();
 }
 
-std::vector<std::vector<int>> WeightedGraph::Johnson() {
+std::vector<std::vector<float>> WeightedGraph::Johnson() {
     /*
      * Johnson's Algorithm
      * - Find shortest distance between all pair of vertices in graph
      * - Returns empty 2d vector if graph is not conservative (contains cycles with negative length)
-     * - Not reachable vertices are returned as MAX_INT
+     * - Not reachable vertices are returned as FLOAT_INT
      */
+
 
     WeightedGraph weightedGraph = *this;
     weightedGraph.addVertex();
@@ -333,8 +334,8 @@ std::vector<std::vector<int>> WeightedGraph::Johnson() {
         weightedGraph.weights.insert({{weightedGraph.adjList.size() - 1, i}, 0});
     }
 
-    std::vector<int> h = weightedGraph.BellmanFord(weightedGraph.adjList.size() - 1);
-    if (h.empty()) { return std::vector<std::vector<int>>(weightedGraph.adjList.size() - 1, std::vector<int>()); }
+    std::vector<float> h = weightedGraph.BellmanFord(weightedGraph.adjList.size() - 1);
+    if (h.empty()) { return std::vector<std::vector<float>>(weightedGraph.adjList.size() - 1, std::vector<float>()); }
 
     for (int i = 0; i < weightedGraph.adjList.size(); ++i) {
         for (auto const &j: weightedGraph.adjList[i]) {
@@ -343,14 +344,14 @@ std::vector<std::vector<int>> WeightedGraph::Johnson() {
     }
 
     weightedGraph.adjList.pop_back();
-    std::vector<std::vector<int>> distances(weightedGraph.adjList.size());
+    std::vector<std::vector<float>> distances(weightedGraph.adjList.size());
     for (int i = 0; i < weightedGraph.adjList.size(); ++i) {
         distances[i] = weightedGraph.Dijkstra(i);
     }
 
     for (int i = 0; i < weightedGraph.adjList.size(); ++i) {
         for (int j = 0; j < weightedGraph.adjList.size(); ++j) {
-            if (distances[i][j] != std::numeric_limits<int>::max()) {
+            if (distances[i][j] != std::numeric_limits<float>::max()) {
                 distances[i][j] += h[j] - h[i];
             }
         }
@@ -359,7 +360,7 @@ std::vector<std::vector<int>> WeightedGraph::Johnson() {
     return distances;
 }
 
-int WeightedGraph::FordFulkerson(const int s, const int t) {
+float WeightedGraph::FordFulkerson(const int s, const int t) {
     /*
      * Ford-Fulkerson Algorithm
      * - Find maximal flow between source (s) and sink (t)
@@ -377,10 +378,10 @@ int WeightedGraph::FordFulkerson(const int s, const int t) {
     }
 
     std::vector<int> predecessors(this->adjList.size());
-    int maxFlow = 0;
+    float maxFlow = 0;
 
     while(residualGraph.bfs(s, t, predecessors)) {
-        int pathFlow = std::numeric_limits<int>::max();
+        float pathFlow = std::numeric_limits<float>::max();
         for (int i = t; i != s; i = predecessors[i]) {
             int j = predecessors[i];
             pathFlow = std::min(pathFlow, residualGraph.weights.at({j, i}));
@@ -396,6 +397,7 @@ int WeightedGraph::FordFulkerson(const int s, const int t) {
 
     return maxFlow;
 }
+
 
 std::vector<int> WeightedGraph::FordFulkersonPath(const int s, const int t) {
     /*
@@ -419,7 +421,7 @@ std::vector<int> WeightedGraph::FordFulkersonPath(const int s, const int t) {
     path.insert(s);
 
     while(residualGraph.bfs(s, t, predecessors)) {
-        int pathFlow = std::numeric_limits<int>::max();
+        float pathFlow = std::numeric_limits<float>::max();
         for (int i = t; i != s; i = predecessors[i]) {
             int j = predecessors[i];
             pathFlow = std::min(pathFlow, residualGraph.weights.at({j, i}));

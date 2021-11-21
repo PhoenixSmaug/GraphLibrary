@@ -43,10 +43,10 @@ class WeightedGraph : public Graph {
 public:
     WeightedGraph(int n);
     WeightedGraph(std::vector<std::pair<int, int>> edges);
-    WeightedGraph(std::vector<std::tuple<int, int, int>> edges);
+    WeightedGraph(std::vector<std::tuple<int, int, float>> edges);
 
     void addEdge(const int b, const int e);
-    void addEdge(const int b, const int e, const int value);
+    void addEdge(const int b, const int e, const float value);
     void addEdge(const std::pair<int, int> edge);
     bool removeEdge(const int b, const int e);
     bool removeEdge(const std::pair<int, int> edge);
@@ -58,16 +58,16 @@ public:
     std::vector<int> JarnikPrim();
     std::vector<std::pair<int, int>> Kruskal();
 
-    std::vector<int> BellmanFord(const int source);
-    std::vector<int> Dijkstra(const int source);
+    std::vector<float> BellmanFord(const int source);
+    std::vector<float> Dijkstra(const int source);
     std::vector<int> Dijkstra(const int source, const int goal);
-    int DijkstraLength(const int source, const int goal);
-    std::vector<std::vector<int>> Johnson();
+    float DijkstraLength(const int source, const int goal);
+    std::vector<std::vector<float>> Johnson();
 
-    int FordFulkerson(const int s, const int t);
+    float FordFulkerson(const int s, const int t);
     std::vector<int> FordFulkersonPath(const int s, const int t);
 private:
-    std::unordered_map<std::pair<int,int>, int, pair_hash> weights;
+    std::unordered_map<std::pair<int,int>, float, pair_hash> weights;
 };
 std::ostream &operator<<(std::ostream& os, const WeightedGraph& weightedGraph);
 
