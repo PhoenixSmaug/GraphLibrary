@@ -6,7 +6,7 @@
 
 std::ostream &operator<<(std::ostream& os, const Graph& graph) {
     for (int i = 0; i < graph.adjList.size(); ++i) {
-        for (auto const& j : graph.adjList[i]) { std::cout << i << " -> " << j << std::endl; }
+        for (auto const& j : graph.adjList[i]) { os << i << " -> " << j << std::endl; }
     }
     return os;
 }

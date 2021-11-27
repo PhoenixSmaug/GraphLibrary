@@ -6,7 +6,7 @@
 
 std::ostream &operator<<(std::ostream& os, const WeightedGraph& weightedGraph) {
     for (int i = 0; i < weightedGraph.adjList.size(); ++i) {
-        for (auto const& j : weightedGraph.adjList[i]) { std::cout << i << " -> " << j << " : " << weightedGraph.weights.at({i, j}) << std::endl; }
+        for (auto const& j : weightedGraph.adjList[i]) { os << i << " -> " << j << " : " << weightedGraph.weights.at({i, j}) << std::endl; }
     }
     return os;
 }
