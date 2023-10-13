@@ -13,4 +13,4 @@ The implemented algorithms are:
 * Johnson shortest paths
 * Ford-Fulkerson maximal flow
 
-(c) Christoph Muessig
+(c) Mia Muessig
